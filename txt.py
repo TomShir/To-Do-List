@@ -4,6 +4,7 @@ import sys
 import random 
 import os 
 import tqdm
+import datetime
 commands=['remove.task','add.task','view_all.tasks','exit_program']
 colors=[Fore.GREEN,Fore.YELLOW,Fore.RED,Fore.CYAN,Fore.BLUE,Fore.RESET]
 count=0
@@ -77,10 +78,13 @@ else:
                         #Asking the user whether they want to save their to do list or not 
                         save_input=input('Do you want to save your to do list y/n?:')
                         if save_input=='y':
+                            current_time=datetime.datetime.now()
                             with open('to_do_list.','w')as a:
-                                a.write('To do List:\n')
+                                a.write('To do List:\n\n')
+                                count=0
                                 for task in tasks:
-                                    a.write(f'\t.{task}\n\t')
+                                    count+=1
+                                    a.write(f'{count}. {task}- set at {current_time.strftime("%d/%m/%y")}\n')
                                 else:
                                     pass 
                         elif save_input=='n':
@@ -120,9 +124,14 @@ else:
                          else:
                              create_progress_bar(bar_colour='RED',number_of_columns=200,delay_time=0.01,description=f'Removing task,{task_name} from {tasks}')
                              tasks.remove(task_name)
+                             os.remove("to_do_list")
+                             with open("to_do_list","a") as a:
+                                 a.write("To do list:\n")
+                                 for position,task in enumerate(tasks):
+                                     position+=1
+                                     a.write(f'  {position}. {task} - set at {current_time.strftime("%d/%m/%y")}\n')
                      else:
                         loop_over(sequence=f'The current state of your to do list:\n{tasks}',delay_time=0.1,color=colors[-1])                    
                     except ValueError:
                         loop_over(sequence='Error,you did not enter a numerical value,please try again',delay_time=0.1,color=colors[2])                             
-                
                 task_remover()
